@@ -5,7 +5,7 @@ services:
     region: oregon
     plan: free
     buildCommand: pip install -e .
-    startCommand: otp-mcp-server --http-stream --host 0.0.0.0 --port $PORT
+    startCommand: bash start.sh
     envVars:
       - key: OTP_MCP_SERVER_TRANSPORT
         value: http-stream
