@@ -30,6 +30,7 @@ import click
 from freakotp.cli import DEFAULT_DB
 
 from . import resource, server, tool
+from .http_server import run_server as run_http_server
 
 __all__ = ["main"]
 
@@ -66,6 +67,12 @@ DEFAULT_PATH = "/mcp"
     help="Use HTTP Stream transport",
 )
 @click.option(
+    "--http",
+    is_flag=True,
+    default=False,
+    help="Use HTTP/REST transport with OAuth (for Zendesk)",
+)
+@click.option(
     "--host",
     default=DEFAULT_HOST,
     show_default=True,
@@ -99,14 +106,18 @@ def main(
     stdio,
     sse,
     http_stream,
+    http,
     host,
     port,
     path,
     log_level,
 ):
-    if not stdio and not sse and not http_stream:
+    if not stdio and not sse and not http_stream and not http:
         otp_mcp_server_transport = os.environ.get("OTP_MCP_SERVER_TRANSPORT", "")
-        if otp_mcp_server_transport == "sse":
+        if otp_mcp_server_transport == "http":
+            # HTTP/REST transport with OAuth
+            http = True
+        elif otp_mcp_server_transport == "sse":
             # Server-Sent Events transport
             sse = True
         elif otp_mcp_server_transport == "http-stream":
@@ -125,7 +136,8 @@ def main(
     )
     logging.info("Starting OTP MCP server with parameters:")
     logging.info(f"  Database: {db}")
-    logging.info(f"  Transport: {'sse' if sse else 'http-stream' if http_stream else 'stdio'}")
+    transport_name = 'http' if http else 'sse' if sse else 'http-stream' if http_stream else 'stdio'
+    logging.info(f"  Transport: {transport_name}")
     logging.info(f"  Host: {host}")
     logging.info(f"  Port: {port}")
     logging.info(f"  Path: {path}")
@@ -135,7 +147,18 @@ def main(
     server.init_token_db(db)
 
     try:
-        if http_stream:
+        if http:
+            # HTTP/REST transport with OAuth (Zendesk-compatible)
+            logging.info("Starting HTTP/REST server with OAuth support...")
+            logging.info(f"OAuth endpoints:")
+            logging.info(f"  - Authorization: http://{host}:{port}/oauth/authorize")
+            logging.info(f"  - Token: http://{host}:{port}/oauth/token")
+            logging.info(f"MCP endpoint:")
+            logging.info(f"  - http://{host}:{port}/v1/mcp")
+            logging.info(f"  - http://{host}:{port}/mcp")
+            run_http_server(host=host, port=port, db_path=db)
+
+        elif http_stream:
             # HTTP Stream Transport
             server.mcp.run(
                 transport="streamable-http",

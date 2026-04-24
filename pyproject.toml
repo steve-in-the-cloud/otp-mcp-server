@@ -16,7 +16,9 @@ dependencies = [
     "click",
     "fastmcp",
     "freakotp",
-    "securid"
+    "securid",
+    "flask",
+    "werkzeug"
 ]
 license = "MIT"
 license-files = ["LICENSE"]

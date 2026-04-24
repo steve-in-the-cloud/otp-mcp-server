@@ -2,3 +2,5 @@ click
 fastmcp
 freakotp
 securid
+flask
+werkzeug
