@@ -105,7 +105,7 @@ Set these in your Render dashboard:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/otp-mcp-server.git
+git clone https://github.com/steve-in-the-cloud/otp-mcp-server.git
 cd otp-mcp-server
 
 # Install in development mode

@@ -34,8 +34,8 @@ dev = [
 ]
 
 [project.urls]
-GitHub = "https://github.com/YOUR_USERNAME/otp-mcp-server"
-Issues = "https://github.com/YOUR_USERNAME/otp-mcp-server/issues"
+GitHub = "https://github.com/steve-in-the-cloud/otp-mcp-server"
+Issues = "https://github.com/steve-in-the-cloud/otp-mcp-server/issues"
 
 [project.scripts]
 otp-mcp-server = "otp_mcp.__main__:main"
